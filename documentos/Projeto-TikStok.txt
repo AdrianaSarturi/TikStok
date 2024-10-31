@@ -12,3 +12,22 @@ DATAS IMPORTANTES e COMPOSIÇÃO DA NOTA:
 HORÁRIO DE ATENDIMENTO (POR AGENDAMENTO):
     - Quarta-feira: 19h às 20h, no G10, terceiro andar, sala B1.
 
+Links:
+
+API-Produto
+https://github.com/evandrokuszera/te29s-api-product
+
+
+API-Pedidos
+https://github.com/evandrokuszera/te29s-api-pedidos
+
+
+Código de Status HTTP (Mozilla)
+https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status
+
+
+Código de Status HTTP (outro link)
+https://www.httpstatus.com.br/
+
+
+
