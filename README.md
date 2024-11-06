@@ -6,5 +6,5 @@ Projeto de API usando Spring Boot (Java)
 Experimental (ainda...)
 
 ## Diagrama
-<img src="./documentos/TikStok-1.drawio-ultima-versao.png" alt="Diagrama"/>
+<img src="./documentos/TikStok-1.drawio-nova.png" alt="Diagrama"/>
 Para apresentação
