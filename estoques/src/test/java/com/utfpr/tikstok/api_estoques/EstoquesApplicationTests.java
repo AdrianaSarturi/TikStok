@@ -1,4 +1,4 @@
-package com.utfpr.tikstok.estoques;
+package com.utfpr.tikstok.api_estoques;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

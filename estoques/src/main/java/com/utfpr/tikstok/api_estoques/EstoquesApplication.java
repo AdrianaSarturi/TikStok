@@ -1,4 +1,4 @@
-package com.utfpr.tikstok.estoques;
+package com.utfpr.tikstok.api_estoques;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

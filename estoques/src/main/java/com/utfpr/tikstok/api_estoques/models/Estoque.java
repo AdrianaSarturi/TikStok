@@ -1,4 +1,4 @@
-package com.utfpr.tikstok.estoques.models;
+package com.utfpr.tikstok.api_estoques.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

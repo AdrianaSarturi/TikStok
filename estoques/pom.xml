@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.utfpr.tikstok</groupId>
-	<artifactId>estoques</artifactId>
+	<artifactId>api-estoques</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>estoques</name>
 	<description>Microsserviço para lançamentos de estoque de produtos.</description>
