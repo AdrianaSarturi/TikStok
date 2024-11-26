@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -21,4 +22,7 @@ public class Estoque {
     private Date dtMovimento;
     private String tipo; // [E] Entrada - [S] Saída
     private Double valorTotal;
+
+    @OneToMany(mappedBy = "estoque", cascade = CascadeType.ALL)
+    private List<ItemEstoque> itens;
 }
