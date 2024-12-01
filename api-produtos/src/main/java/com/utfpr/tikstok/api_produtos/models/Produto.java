@@ -17,5 +17,5 @@ public class Produto {
     @SequenceGenerator(name="produto_seq", sequenceName = "produto_seq", allocationSize = 1)
     private Long id;
     private String descricao;
-    private Integer qtdEstoque;
+    private String unidade;
 }
