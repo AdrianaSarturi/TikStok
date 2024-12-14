@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-@FeignClient(name="api-produtos", url="localhost:8080")
+@FeignClient(name="api-produtos", url="localhost:8081")
 public interface ProdutoFeignClient {
 
     @GetMapping("/produtos/{id}")
