@@ -26,7 +26,8 @@ public class ProdutoService {
             ProdutoDTO produtoDTO = new ProdutoDTO(
                     produto.getId(),
                     produto.getDescricao(),
-                    produto.getUnidade()
+                    produto.getUnidade(),
+                    produto.getQtdEstoque()
             );
             produtosDTO.add(produtoDTO);
         }
@@ -39,7 +40,8 @@ public class ProdutoService {
                 .map(produto -> new ProdutoDTO(
                         produto.getId(),
                         produto.getDescricao(),
-                        produto.getUnidade()
+                        produto.getUnidade(),
+                        produto.getQtdEstoque()
                 ))
                 .orElse(null);
     }
@@ -49,6 +51,7 @@ public class ProdutoService {
 
         produto.setDescricao(produtoDTO.descricao());
         produto.setUnidade(produtoDTO.unidade());
+        produto.setQtdEstoque(0.0);
 
         return this.repository.save(produto);
     }

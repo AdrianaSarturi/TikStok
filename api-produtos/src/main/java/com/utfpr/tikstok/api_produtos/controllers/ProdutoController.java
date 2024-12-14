@@ -5,6 +5,7 @@ import com.utfpr.tikstok.api_produtos.models.Produto;
 import com.utfpr.tikstok.api_produtos.services.ProdutoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,12 +24,12 @@ public class ProdutoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id) {
+    public ResponseEntity<ProdutoDTO> getById(@PathVariable Long id) {
         ProdutoDTO produto = produtoService.getById(id);
         if (produto != null) {
             return ResponseEntity.ok(produto);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 

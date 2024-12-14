@@ -18,4 +18,5 @@ public class Produto {
     private Long id;
     private String descricao;
     private String unidade;
+    private Double qtdEstoque;
 }
