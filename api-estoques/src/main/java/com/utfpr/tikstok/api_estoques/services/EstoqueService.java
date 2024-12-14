@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EstoqueService {
@@ -65,6 +66,23 @@ public class EstoqueService {
 
     public List<Estoque> getAll(){
         return this.estoqueRepository.findAll();
+    }
+
+    public Estoque getEstoqueById(Long idEstoque){
+        Optional<Estoque> estoqueBusca = estoqueRepository.findById(idEstoque);
+        if(estoqueBusca.isPresent())
+            return estoqueBusca.get();
+        else
+            return null;
+    }
+
+    public boolean deleteById(Long idEstoque){
+        if(!this.estoqueRepository.existsById(idEstoque))
+            return false;
+
+        this.estoqueRepository.deleteById(idEstoque);
+
+        return true;
     }
 
 }
