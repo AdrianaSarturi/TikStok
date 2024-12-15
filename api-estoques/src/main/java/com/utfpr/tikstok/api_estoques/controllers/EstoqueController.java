@@ -32,4 +32,21 @@ public class EstoqueController {
     public ResponseEntity<?> getAll(){
         return ResponseEntity.ok(this.estoqueService.getAll());
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getEstoqueById(@PathVariable Long id){
+        Estoque estoqueBusca = estoqueService.getEstoqueById(id);
+        if(estoqueBusca == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Estoque não encontrado!");
+        else
+            return ResponseEntity.ok().body(estoqueBusca);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable Long id){
+        if(this.estoqueService.deleteById(id))
+            return ResponseEntity.ok().body("Lançamento de estoque deletado com sucesso!");
+        else
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Não foi possível deletar o registro!");
+    }
 }
