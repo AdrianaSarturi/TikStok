@@ -1,6 +1,7 @@
 package com.utfpr.tikstok.api_produtos.controllers;
 
 import com.utfpr.tikstok.api_produtos.dtos.ProdutoDTO;
+import com.utfpr.tikstok.api_produtos.dtos.ProdutoEstoqueUpdateDTO;
 import com.utfpr.tikstok.api_produtos.models.Produto;
 import com.utfpr.tikstok.api_produtos.services.ProdutoService;
 import jakarta.validation.Valid;
@@ -62,5 +63,12 @@ public class ProdutoController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PutMapping("/{id}/atualizar-estoque")
+    public ResponseEntity<?> atualizarEstoque(@PathVariable Long id,
+                                              @RequestBody @Valid ProdutoEstoqueUpdateDTO estoqueDTO) {
+        Produto produtoAtualizado = produtoService.atualizarEstoque(id, estoqueDTO.tipo(), estoqueDTO.qtdEstoque());
+        return ResponseEntity.ok(produtoAtualizado);
     }
 }
