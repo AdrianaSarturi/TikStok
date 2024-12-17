@@ -1,6 +1,6 @@
 # TikStok
 
-![Logo do Projeto](caminho/para/logo.png)
+![Logo do Projeto](imagens/logo-tikstok-final.png)
 
 ## Índice
 
@@ -34,14 +34,22 @@ O TikStok é uma API desenvolvida em Java utilizando o framework Spring Boot. Es
 ## Funcionalidades
 
 - [x] Cadastro de produtos
-- [x] Gerenciamento de estoque
-- [ ] [Outra funcionalidade planejada]
+- [x] Lançamento de estoques
+- [ ] Saldos de produtos
+- [ ] Relatórios
+      - [ ] Extratos (Movimentação dos Produtos)
+      - [ ] Balanços (Saldos dos Produtos por Data)
+      - [ ] Preços (Históricos dos preços de custo e preço de venda dos Produtos)
+      - [ ] Resumo dos Balanços (Movimentação Total de todos os produtos num determinado período)
+      - [ ] Resumo dos Preços (Lista dos preços de todos os produtos num determinado período)
+- [ ] Reprocessamento dos Saldos
+
 
 ## Pré-requisitos
 
 Antes de iniciar, certifique-se de que você atendeu aos seguintes requisitos:
 
-- Java JDK 11 ou superior instalado
+- Java JDK 17 ou superior instalado
 - Maven instalado
 - Banco de dados PostgreSQL configurado
 
