@@ -16,7 +16,16 @@
 
 ## Descrição do Projeto
 
-O TikStok é uma API desenvolvida em Java utilizando o framework Spring Boot. Este projeto tem como objetivo fornecer funcionalidades relacionadas a [descrever funcionalidades principais, por exemplo, gerenciamento de produtos e estoques].
+O TikStok é uma API desenvolvida em Java utilizando o framework Spring Boot. Este projeto tem como objetivo fornecer funcionalidades relacionadas a micro serviços para:
+- Cadastro de Produtos (api-produtos)
+- Lançamentos de movimento de Estoques (api-estoques)
+- Controle dos Saldos dos Produtos (api-saldos)
+- Relatórios (api-relatorios):
+    - Extratos (Movimentação dos Produtos)
+    - Balanços (Saldos dos Produtos por Data)
+    - Preços (Históricos dos preços de custo e preço de venda dos Produtos)
+    - Resumo dos Balanços (Movimentação Total de todos os produtos num determinado período)
+    - Resumo dos Preços (Lista dos preços de todos os produtos num determinado período)
 
 ## Status do Projeto
 
@@ -84,7 +93,7 @@ Este projeto está licenciado sob a Licença MIT. Consulte o arquivo LICENSE par
 
 
 
-# TikStok
+# Outras coisas do TikStok
 Projeto de API usando Spring Boot (Java)
 <img src="./imagens/Logo-Aguia-Spring-Boot.jpeg" alt="Logo Águia Spring Boot" />
 ## Nova Logomarca
