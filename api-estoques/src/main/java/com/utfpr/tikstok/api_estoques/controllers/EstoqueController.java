@@ -3,6 +3,7 @@ package com.utfpr.tikstok.api_estoques.controllers;
 import com.utfpr.tikstok.api_estoques.dtos.EstoqueDTO;
 import com.utfpr.tikstok.api_estoques.models.Estoque;
 import com.utfpr.tikstok.api_estoques.services.EstoqueService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class EstoqueController {
     }
 
     @PostMapping
-    public ResponseEntity<?> lancarEstoque(@RequestBody EstoqueDTO estoqueDTO){
+    public ResponseEntity<?> lancarEstoque(@Valid @RequestBody EstoqueDTO estoqueDTO){
         Estoque estoque = estoqueService.lancarEstoque(estoqueDTO);
 
         if(estoque != null){
