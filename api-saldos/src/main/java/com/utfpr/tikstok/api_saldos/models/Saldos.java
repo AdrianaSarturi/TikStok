@@ -12,5 +12,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Saldos {
-
+	private SaldosKey id;
+	private double q_anterior;
+	private double v_anterior;
+	private double q_entradas;
+	private double v_entradas;
+	private double q_saidas;
+	private double v_saidas;
+	private double q_atual;
+	private double v_atual;
 }
