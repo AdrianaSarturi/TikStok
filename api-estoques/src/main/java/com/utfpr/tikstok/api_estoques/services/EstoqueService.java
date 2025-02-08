@@ -1,6 +1,7 @@
 package com.utfpr.tikstok.api_estoques.services;
 
 import com.utfpr.tikstok.api_estoques.dtos.EstoqueDTO;
+import com.utfpr.tikstok.api_estoques.dtos.EstoqueUpdateDTO;
 import com.utfpr.tikstok.api_estoques.dtos.ProdutoDTO;
 import com.utfpr.tikstok.api_estoques.models.Estoque;
 import com.utfpr.tikstok.api_estoques.repository.EstoqueRepository;
@@ -51,11 +52,19 @@ public class EstoqueService {
     }
 
     public Estoque getEstoqueById(Long idEstoque){
-        Optional<Estoque> estoqueBusca = estoqueRepository.findById(idEstoque);
-        if(estoqueBusca.isPresent())
-            return estoqueBusca.get();
-        else
-            return null;
+        return estoqueRepository.findById(idEstoque).orElse(null);
+    }
+
+    public Estoque alterarEstoque(EstoqueUpdateDTO estoqueUpdateDTO, Long idEstoque){
+        Estoque estoque = estoqueRepository.findById(idEstoque).orElse(null);
+        if(estoque != null){
+            estoque.setDtMovimento(estoqueUpdateDTO.dtMovimento() != null ? estoqueUpdateDTO.dtMovimento(): estoque.getDtMovimento());
+            estoque.setQuantidade(estoqueUpdateDTO.quantidade() != null ? estoqueUpdateDTO.quantidade() : estoque.getQuantidade());
+            estoque.setValorUnitario(estoqueUpdateDTO.valorUnitario() != null ? estoqueUpdateDTO.valorUnitario() : estoque.getValorUnitario());
+
+            return estoqueRepository.save(estoque);
+        }
+        return null;
     }
 
     public boolean deleteById(Long idEstoque){
