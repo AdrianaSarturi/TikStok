@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Positive;
 import java.util.Date;
 
 public record EstoqueDTO(
-        Long id,
         Date dtMovimento,
         @NotBlank(message = "Informe o tipo da movimentação (E - entrada)/S - saída)!")
         @Pattern(regexp = "E|S", message = "O campo deve ser preenchido com 'E' - entrada ou 'S' - saída!")
