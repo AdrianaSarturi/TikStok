@@ -1,6 +1,7 @@
 package com.utfpr.tikstok.api_estoques.controllers;
 
 import com.utfpr.tikstok.api_estoques.dtos.EstoqueDTO;
+import com.utfpr.tikstok.api_estoques.dtos.EstoqueUpdateDTO;
 import com.utfpr.tikstok.api_estoques.models.Estoque;
 import com.utfpr.tikstok.api_estoques.services.EstoqueService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +30,7 @@ public class EstoqueController {
                     "O campo `id` é gerado automaticamente pelo sistema, não sendo necessário no corpo da requisição. " +
                     "O `tipo` de movimentação pode ser entrada (E) ou saída (S).",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Dados do lançamento",
+                    description = "Corpo da requisição",
                     required = true,
                     content = @Content(
                             schema = @Schema(implementation = EstoqueDTO.class)
@@ -77,6 +78,28 @@ public class EstoqueController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Estoque não encontrado!");
         else
             return ResponseEntity.ok().body(estoqueBusca);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(
+            summary = "Alterar estoque",
+            description = "Altera os dados de estoque de um determinado lançamento, com base em seu `id`. "+
+                    "Os campos alteráveis são `dtMovimento`, `quantidade` e `valorUnitario`, mas nenhum deles é obrigatório. "+
+                    "O campo que não for informado, não será alterado.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Corpo da requisição",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = EstoqueUpdateDTO.class)
+                    )
+            )
+    )
+    public ResponseEntity<?> alterarEstoque(@PathVariable Long id, @Valid @RequestBody EstoqueUpdateDTO estoqueUpdateDTO){
+        Estoque estoque = estoqueService.alterarEstoque(estoqueUpdateDTO, id);
+        if(estoque != null){
+            return ResponseEntity.ok().body(estoque);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível alterar o registro de estoque.");
     }
 
     @DeleteMapping("/{id}")
