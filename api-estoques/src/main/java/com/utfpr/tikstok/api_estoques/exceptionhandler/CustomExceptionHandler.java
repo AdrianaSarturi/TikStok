@@ -21,4 +21,9 @@ public class CustomExceptionHandler {
 
         return ResponseEntity.badRequest().body(errors);
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleValidationErrorsException(Exception ex){
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
 }
