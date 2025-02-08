@@ -3,13 +3,13 @@ package com.utfpr.tikstok.api_estoques.services;
 import com.utfpr.tikstok.api_estoques.dtos.EstoqueDTO;
 import com.utfpr.tikstok.api_estoques.dtos.EstoqueUpdateDTO;
 import com.utfpr.tikstok.api_estoques.dtos.ProdutoDTO;
+import com.utfpr.tikstok.api_estoques.dtos.ProdutoEstoqueUpdateDTO;
 import com.utfpr.tikstok.api_estoques.models.Estoque;
 import com.utfpr.tikstok.api_estoques.repository.EstoqueRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EstoqueService {
@@ -22,29 +22,47 @@ public class EstoqueService {
         this.produtoFeignClient = produtoFeignClient;
     }
 
-    public Estoque lancarEstoque(EstoqueDTO estoqueDTO){
+    public Estoque lancarEstoque(EstoqueDTO estoqueDTO) throws Exception {
         Estoque estoque = new Estoque();
+        ProdutoDTO produtoBusca;
 
         estoque.setTipo(estoqueDTO.tipo());
         estoque.setDtMovimento(new Date());
 
-        // Verifica se o produto existe no banco de dados
-        ProdutoDTO produtoBusca = produtoFeignClient.getProdutoById(estoqueDTO.idProduto());
+        // Verifica existência do produto
+        try {
+            produtoBusca = produtoFeignClient.getProdutoById(estoqueDTO.idProduto()).getBody();
+        } catch (RuntimeException exp){
+            throw new Exception("Produto "+estoqueDTO.idProduto()+" não encontrado!");
+        }
 
         if(produtoBusca == null){
-            return null;
+            throw new Exception("Produto "+estoqueDTO.idProduto()+" não encontrado!");
         }
-        // Se for movimentacao de saida, deve verificar se o produto possui saldo para movimentar
-        /*if(estoqueDTO.tipo().equals("S")){
+        // Se for movimentação de saída, deve verificar se o produto possui saldo para venda
+        if(estoqueDTO.tipo().equals("S")){
             if(estoqueDTO.quantidade() > produtoBusca.qtdEstoque())
-                return null;
-        }*/
+                throw new Exception("Produto "+estoqueDTO.idProduto()+"-"+produtoBusca.descricao()+" sem estoque disponível para venda!");
+        }
 
         estoque.setIdProduto(estoqueDTO.idProduto());
         estoque.setQuantidade(estoqueDTO.quantidade());
         estoque.setValorUnitario(estoqueDTO.valorUnitario());
 
-        return this.estoqueRepository.save(estoque);
+        // Registra a movimentação de estoque no banco de dados
+        Estoque estoqueSalvo = this.estoqueRepository.save(estoque);
+
+        // Efetua a baixa de estoque do produto
+        produtoFeignClient.atualizarEstoque(
+                produtoBusca.id(),
+                new ProdutoEstoqueUpdateDTO(
+                        estoqueDTO.idProduto(),
+                        estoqueDTO.tipo(),
+                        estoqueDTO.quantidade().doubleValue()
+                )
+        );
+
+        return estoqueSalvo;
     }
 
     public List<Estoque> getAll(){
