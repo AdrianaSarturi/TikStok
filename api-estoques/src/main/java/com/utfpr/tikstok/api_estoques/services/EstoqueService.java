@@ -52,7 +52,7 @@ public class EstoqueService {
         // Registra a movimentação de estoque no banco de dados
         Estoque estoqueSalvo = this.estoqueRepository.save(estoque);
 
-        // Efetua a baixa de estoque do produto
+        // Efetua a baixa de estoque do produto.
         produtoFeignClient.atualizarEstoque(
                 produtoBusca.id(),
                 new ProdutoEstoqueUpdateDTO(
