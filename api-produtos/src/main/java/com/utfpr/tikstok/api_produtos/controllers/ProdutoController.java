@@ -65,7 +65,7 @@ public class ProdutoController {
         if (produto != null) {
             return ResponseEntity.ok(produto);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto com o ID fornecido não encontrado !");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto com o ID fornecido não encontrado!");
         }
     }
 
