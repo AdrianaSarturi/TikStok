@@ -5,6 +5,7 @@ import com.utfpr.tikstok.api_estoques.dtos.EstoqueUpdateDTO;
 import com.utfpr.tikstok.api_estoques.dtos.ProdutoDTO;
 import com.utfpr.tikstok.api_estoques.models.Estoque;
 import com.utfpr.tikstok.api_estoques.repository.EstoqueRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -15,6 +16,9 @@ public class EstoqueService {
 
     private EstoqueRepository estoqueRepository;
     private ProdutoFeignClient produtoFeignClient;
+
+    @Autowired
+    private SaldosFeignClient saldosFeignClient;
 
     public EstoqueService(EstoqueRepository repository, ProdutoFeignClient produtoFeignClient){
         this.estoqueRepository = repository;
@@ -39,10 +43,10 @@ public class EstoqueService {
             throw new Exception("Produto "+estoqueDTO.idProduto()+" não encontrado!");
         }
         // Se for movimentação de saída, deve verificar se o produto possui saldo para venda
-        if(estoqueDTO.tipo().equals("S")){
+        //if(estoqueDTO.tipo().equals("S")){
             // rotina que verifica o saldo
             //throw new Exception("Produto "+estoqueDTO.idProduto()+"-"+produtoBusca.descricao()+" sem estoque disponível para venda!");
-        }
+        //}
 
         estoque.setIdProduto(estoqueDTO.idProduto());
         estoque.setQuantidade(estoqueDTO.quantidade());
@@ -52,7 +56,18 @@ public class EstoqueService {
         Estoque estoqueSalvo = this.estoqueRepository.save(estoque);
 
         // Chama API dos Saldos para atualizar o saldo do produto no dia da movimentação
-        //
+        /*if(estoqueSalvo != null)
+            saldosFeignClient.processarSaldo(
+                    new EstoqueDTO(
+                            estoqueSalvo.getId(),
+                            estoqueSalvo.getDtMovimento(),
+                            estoqueSalvo.getTipo(),
+                            estoqueSalvo.getIdProduto(),
+                            estoqueSalvo.getQuantidade(),
+                            estoqueSalvo.getValorUnitario()
+                    )
+            );
+         */
 
         return estoqueSalvo;
     }
@@ -71,6 +86,19 @@ public class EstoqueService {
             estoque.setDtMovimento(estoqueUpdateDTO.dtMovimento() != null ? estoqueUpdateDTO.dtMovimento(): estoque.getDtMovimento());
             estoque.setQuantidade(estoqueUpdateDTO.quantidade() != null ? estoqueUpdateDTO.quantidade() : estoque.getQuantidade());
             estoque.setValorUnitario(estoqueUpdateDTO.valorUnitario() != null ? estoqueUpdateDTO.valorUnitario() : estoque.getValorUnitario());
+
+            /*
+            saldosFeignClient.alterarSaldo(
+                    new EstoqueDTO(
+                            estoque.getId(),
+                            estoque.getDtMovimento(),
+                            estoque.getTipo(),
+                            estoque.getIdProduto(),
+                            estoque.getQuantidade(),
+                            estoque.getValorUnitario()
+                    )
+            );
+             */
 
             return estoqueRepository.save(estoque);
         }
