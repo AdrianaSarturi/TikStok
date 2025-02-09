@@ -5,12 +5,19 @@ import com.utfpr.tikstok.api_relatorios.dtos.PeriodoParmDTO;
 import com.utfpr.tikstok.api_relatorios.dtos.ProdutoPeriodoParmDTO;
 import com.utfpr.tikstok.api_relatorios.models.ExtratoProduto;
 import com.utfpr.tikstok.api_relatorios.services.RelatorioService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,9 +29,34 @@ public class RelatorioController {
     private RelatorioService relatorioService;
 
     @GetMapping("/extrato-produto")
-    public ResponseEntity<?> getExtratoProduto(@Valid @RequestBody ProdutoPeriodoParmDTO parm){
+    @Operation(
+            summary = "Extrato do Produto",
+            description = "Consulta as movimentações de estoque de um produto em um período específico.",
+            parameters = {
+                    @Parameter(name = "idProduto", description = "ID do produto", required = true),
+                    @Parameter(name = "dtInicial", description = "Data inicial do período", required = true),
+                    @Parameter(name = "dtFinal", description = "Data final do período", required = true)
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Lista de movimentações retornada com sucesso.",
+                            content = @Content(schema = @Schema(implementation = ExtratoProdutoDTO.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Produto sem movimentações de estoque."
+                    )
+            }
+    )
+    public ResponseEntity<?> getExtratoProduto(
+            @RequestParam Long idProduto,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dtInicial,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dtFinal
+    ) {
+        ProdutoPeriodoParmDTO parm = new ProdutoPeriodoParmDTO(idProduto, dtInicial, dtFinal);
         List<ExtratoProduto> extratoProd = relatorioService.getExtratoProduto(parm);
-        if(extratoProd != null){
+        if (extratoProd != null && !extratoProd.isEmpty()) {
             List<ExtratoProdutoDTO> extratos = extratoProd.stream()
                     .map(ep -> new ExtratoProdutoDTO(
                             ep.getId(),
@@ -33,33 +65,48 @@ public class RelatorioController {
                             ep.getValorUnitario(),
                             ep.getValorTotal(),
                             ep.getDtMovimento()
-                            )
-
-                    ).collect(Collectors.toList());
+                    ))
+                    .collect(Collectors.toList());
             return ResponseEntity.ok().body(extratos);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto sem movimentações de estoque.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto sem movimentações de estoque para o período informado.");
     }
 
     @GetMapping("/balanco-produto")
+    @Operation(
+            summary = "Balanço do Produto",
+            description = "Consulta o balanço de estoque de um produto em um período específico."
+    )
     public ResponseEntity<?> getBalancoProduto(@Valid @RequestBody ProdutoPeriodoParmDTO parm){
         // relatorioService.getBalancoProduto(parm);
         return ResponseEntity.ok().body("Relatório ainda não implementado.");
     }
 
     @GetMapping("/precos-produto")
+    @Operation(
+            summary = "Preços do Produto",
+            description = "Consulta os preços de um produto em um período específico."
+    )
     public ResponseEntity<?> getPrecosProduto(@Valid @RequestBody ProdutoPeriodoParmDTO parm){
         // relatorioService.getPrecosProduto(parm);
         return ResponseEntity.ok().body("Relatório ainda não implementado.");
     }
 
     @GetMapping("/balanco-lista")
+    @Operation(
+            summary = "Balanço Geral de Estoque",
+            description = "Consulta o balanço geral de estoque em um período específico."
+    )
     public ResponseEntity<?> getBalancoLista(PeriodoParmDTO parm){
         // relatorioService.getBalancoLista(parm);
         return ResponseEntity.ok().body("Relatório ainda não implementado.");
     }
 
     @GetMapping("/precos-lista")
+    @Operation(
+            summary = "Preços de Produtos",
+            description = "Consulta os preços de todos os produtos em um período específico."
+    )
     public ResponseEntity<?> getPrecosLista(PeriodoParmDTO parm){
         // relatorioService.getPrecosLista(parm);
         return ResponseEntity.ok().body("Relatório ainda não implementado.");
