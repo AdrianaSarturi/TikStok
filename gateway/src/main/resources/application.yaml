@@ -12,6 +12,10 @@ spring:
           uri: http://localhost:8082
           predicates:
             Path=/estoques/**
+        - id: api-relatorios
+          uri: http://localhost:8084
+          predicates:
+              - Path=/relatorios/**
 
 server:
   port: 8080

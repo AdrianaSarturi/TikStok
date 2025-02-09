@@ -1,4 +1,4 @@
-package com.utfpr.tikstok.api_estoques.exceptionhandler;
+package com.utfpr.tikstok.api_saldos.exceptionhandler;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -20,10 +20,5 @@ public class CustomExceptionHandler {
         }
 
         return ResponseEntity.badRequest().body(errors);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleValidationErrorsException(Exception ex){
-        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 }

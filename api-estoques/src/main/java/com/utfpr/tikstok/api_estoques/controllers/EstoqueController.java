@@ -48,7 +48,7 @@ public class EstoqueController {
                     )
             }
     )
-    public ResponseEntity<?> lancarEstoque(@Valid @RequestBody EstoqueDTO estoqueDTO){
+    public ResponseEntity<?> lancarEstoque(@Valid @RequestBody EstoqueDTO estoqueDTO) throws Exception {
         Estoque estoque = estoqueService.lancarEstoque(estoqueDTO);
 
         if(estoque != null){
