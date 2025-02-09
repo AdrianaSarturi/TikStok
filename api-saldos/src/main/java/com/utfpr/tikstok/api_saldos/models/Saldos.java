@@ -1,5 +1,6 @@
 package com.utfpr.tikstok.api_saldos.models;
 
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +13,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Saldos {
-	private SaldosKey id;
+	@EmbeddedId
+	private SaldosKey Saldosid;
 	private double q_anterior;
 	private double v_anterior;
 	private double q_entradas;
