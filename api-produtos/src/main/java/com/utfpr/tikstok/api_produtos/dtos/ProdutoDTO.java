@@ -9,4 +9,4 @@ public record ProdutoDTO(
         @NotBlank(message = "Unidade não pode ser nula ou vazia!")
         String unidade,
         Double qtdEstoque
-        ) {}
+) {}
