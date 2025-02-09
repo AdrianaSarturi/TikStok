@@ -5,7 +5,6 @@ import com.utfpr.tikstok.api_produtos.dtos.ProdutoEstoqueUpdateDTO;
 import com.utfpr.tikstok.api_produtos.models.Produto;
 import com.utfpr.tikstok.api_produtos.services.ProdutoService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/produtos")
@@ -30,8 +30,18 @@ public class ProdutoController {
             summary = "Listar produtos",
             description = "Retorna uma lista de todos os produtos cadastrados no sistema."
     )
-    public ResponseEntity<List<ProdutoDTO>> getAll() {
-        return ResponseEntity.ok(produtoService.getAll());
+    public ResponseEntity<?> getAll() {
+        List<ProdutoDTO> produtos = produtoService.getAll();
+        if (produtos.isEmpty()) {
+            return ResponseEntity.ok(Map.of(
+                    "message", "Nenhum produto encontrado.",
+                    "produtos", produtos
+            ));
+        }
+        return ResponseEntity.ok(Map.of(
+                "message", "Produtos listados com sucesso.",
+                "produtos", produtos
+        ));
     }
 
     @GetMapping("/{id}")
@@ -50,12 +60,12 @@ public class ProdutoController {
                     )
             }
     )
-    public ResponseEntity<ProdutoDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<?> getById(@PathVariable Long id) {
         ProdutoDTO produto = produtoService.getById(id);
         if (produto != null) {
             return ResponseEntity.ok(produto);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto com o ID fornecido não encontrado!");
         }
     }
 
@@ -67,7 +77,14 @@ public class ProdutoController {
                     description = "Dados do novo produto.",
                     required = true,
                     content = @Content(
-                            schema = @Schema(implementation = ProdutoDTO.class)
+                            schema = @Schema(implementation = ProdutoDTO.class),
+                            examples = {
+                                    @ExampleObject(
+                                            name = "Exemplo de cadastro válido.",
+                                            value = "{\"descricao\": \"Produto A\", \"unidade\": \"KG\"}",
+                                            summary = "Exemplo de produto cadastrado com sucesso"
+                                    )
+                            }
                     )
             ),
             responses = {
@@ -87,7 +104,7 @@ public class ProdutoController {
         if (produto != null)
             return ResponseEntity.created(null).body(produto);
         else
-            return null;
+            return ResponseEntity.badRequest().body("Erro ao cadastrar o produto!");
     }
 
     @PutMapping("/{id}")
@@ -98,7 +115,15 @@ public class ProdutoController {
                     description = "Novos dados do produto.",
                     required = true,
                     content = @Content(
-                            schema = @Schema(implementation = ProdutoDTO.class)
+                            schema = @Schema(implementation = ProdutoDTO.class),
+                            examples = {
+                                    @ExampleObject(
+                                            name = "Exemplo de atualização de produto.",
+                                            value = "{\"descricao\": \"Produto Atualizado\", \"unidade\": \"KG\"}",
+                                            summary = "Exemplo de entrada válida para atualização de produto"
+                                    )
+                            }
+
                     )
             ),
             responses = {
@@ -118,7 +143,7 @@ public class ProdutoController {
         if (produtoAtualizado != null) {
             return ResponseEntity.ok(produtoAtualizado);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível atualizar o produto, confira o código informado!");
         }
     }
 
@@ -140,9 +165,10 @@ public class ProdutoController {
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
         boolean deleted = produtoService.deleteProduto(id);
         if (deleted) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok("Produto deletado com sucesso!");
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Produto não encontrado para exclusão!");
         }
     }
 
@@ -157,9 +183,9 @@ public class ProdutoController {
                             schema = @Schema(implementation = ProdutoEstoqueUpdateDTO.class),
                             examples = {
                                     @ExampleObject(
-                                            name = "Exemplo de entrada:",
+                                            name = "Exemplo de entrada.",
                                             value = "{\"tipo\": \"E\", \"qtdEstoque\": 10.0}",
-                                            summary = "Entrada de estoque válida."
+                                            summary = "Entrada de estoque válida"
                                     )
                             }
                     )
