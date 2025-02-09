@@ -19,4 +19,5 @@ import lombok.Setter;
 public class SaldosKey implements Serializable {
     private Long idProduto;
     private Date data;
+    
 }
