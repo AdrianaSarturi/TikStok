@@ -3,7 +3,6 @@ package com.utfpr.tikstok.api_estoques.services;
 import com.utfpr.tikstok.api_estoques.dtos.EstoqueDTO;
 import com.utfpr.tikstok.api_estoques.dtos.EstoqueUpdateDTO;
 import com.utfpr.tikstok.api_estoques.dtos.ProdutoDTO;
-import com.utfpr.tikstok.api_estoques.dtos.ProdutoEstoqueUpdateDTO;
 import com.utfpr.tikstok.api_estoques.models.Estoque;
 import com.utfpr.tikstok.api_estoques.repository.EstoqueRepository;
 import org.springframework.stereotype.Service;
@@ -41,8 +40,8 @@ public class EstoqueService {
         }
         // Se for movimentação de saída, deve verificar se o produto possui saldo para venda
         if(estoqueDTO.tipo().equals("S")){
-            if(estoqueDTO.quantidade() > produtoBusca.qtdEstoque())
-                throw new Exception("Produto "+estoqueDTO.idProduto()+"-"+produtoBusca.descricao()+" sem estoque disponível para venda!");
+            // rotina que verifica o saldo
+            //throw new Exception("Produto "+estoqueDTO.idProduto()+"-"+produtoBusca.descricao()+" sem estoque disponível para venda!");
         }
 
         estoque.setIdProduto(estoqueDTO.idProduto());
@@ -52,15 +51,8 @@ public class EstoqueService {
         // Registra a movimentação de estoque no banco de dados
         Estoque estoqueSalvo = this.estoqueRepository.save(estoque);
 
-        // Efetua a baixa de estoque do produto.
-        produtoFeignClient.atualizarEstoque(
-                produtoBusca.id(),
-                new ProdutoEstoqueUpdateDTO(
-                        estoqueDTO.idProduto(),
-                        estoqueDTO.tipo(),
-                        estoqueDTO.quantidade().doubleValue()
-                )
-        );
+        // Chama API dos Saldos para atualizar o saldo do produto no dia da movimentação
+        //
 
         return estoqueSalvo;
     }
