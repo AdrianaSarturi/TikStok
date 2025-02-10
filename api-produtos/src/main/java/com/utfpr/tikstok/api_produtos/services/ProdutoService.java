@@ -71,25 +71,4 @@ public class ProdutoService {
         }
         return false;
     }
-
-    public Produto atualizarEstoque(Long idProduto, String tipo, Double quantidade) {
-        // Busca o produto pelo ID
-        Produto produto = repository.findById(idProduto)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado!"));
-
-        // Valida o tipo da movimentação
-        if (tipo.equalsIgnoreCase("E")) { // Entrada
-            produto.setQtdEstoque(produto.getQtdEstoque() + quantidade); // Soma o estoque
-        } else if (tipo.equalsIgnoreCase("S")) { // Saída
-            if (produto.getQtdEstoque() < quantidade) {
-                throw new RuntimeException("Quantidade insuficiente no estoque para saída!");
-            }
-            produto.setQtdEstoque(produto.getQtdEstoque() - quantidade); // Subtrai o estoque
-        } else {
-            throw new IllegalArgumentException("Tipo de movimentação inválido. Use 'E' para Entrada ou 'S' para Saída.");
-        }
-
-        return repository.save(produto);
-    }
-
 }
