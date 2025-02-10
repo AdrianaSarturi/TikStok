@@ -26,12 +26,12 @@ public class SaldosService {
 	}
 	
 	public Saldos lancarSaldo(EstoqueDTO registro) {
-		Double q_entradas;
-		Double v_entradas;
-		Double q_saidas;
-		Double v_saidas;
-		Double saldoAnterior;
-		Double saldoAtual;
+		double q_entradas;
+		double v_entradas;
+		double q_saidas;
+		double v_saidas;
+		double saldoAnterior;
+		double saldoAtual;
 		SaldosKey saldoId = new SaldosKey();
 		saldoId.setIdProduto(registro.idProduto());
 		saldoId.setData(this.dataSemHora(registro.dtMovimento()));
@@ -73,10 +73,8 @@ public class SaldosService {
 		saldo.setQ_saidas(q_saidas);
 		saldo.setV_saidas(v_saidas);
 		saldo.setQ_atual(saldoAtual);
-
-		Saldos saldoSalvo = this.saldosRepository.save(saldo);
 		
-		return saldoSalvo;
+		return this.saldosRepository.save(saldo);
 	}
 
 	public Saldos getSaldoById(SaldosKey saldoId) {
@@ -90,14 +88,41 @@ public class SaldosService {
 
         Saldos saldo = saldosRepository.findById(saldoId).orElse(null);
         if(saldo != null){
-        	Estoque estoque = estoqueRepository.findById(estoqueDTO.id());
-        	
-            estoque.setDtMovimento(estoqueUpdateDTO.dtMovimento() != null ? estoqueUpdateDTO.dtMovimento(): estoque.getDtMovimento());
-            estoque.setQuantidade(estoqueUpdateDTO.quantidade() != null ? estoqueUpdateDTO.quantidade() : estoque.getQuantidade());
-            estoque.setValorUnitario(estoqueUpdateDTO.valorUnitario() != null ? estoqueUpdateDTO.valorUnitario() : estoque.getValorUnitario());
+        	Estoque estoque = estoqueRepository.findById(estoqueDTO.id()).orElse(null);
+        	// Desfazendo...
+    		double q_alterada;
+    		double v_alterada;
+    		double saldoAlterada;
+    		q_alterada = estoque.getQuantidade();
+    		v_alterada = (estoque.getValorUnitario() * q_alterada);
+        	SaldosKey saldoIdAntes = new SaldosKey(estoque.getIdProduto(), this.dataSemHora(estoque.getDtMovimento()));
+        	Saldos saldoAntes = saldosRepository.findById(saldoIdAntes).orElse(null);
+        	if (estoque.getTipo() == "E") {
+        		saldoAntes.setQ_entradas(saldoAntes.getQ_entradas() - q_alterada);
+        		saldoAntes.setV_entradas(saldoAntes.getV_entradas() - v_alterada);
+        	} else {
+        		saldoAntes.setQ_saidas(saldoAntes.getQ_saidas() - q_alterada);
+        		saldoAntes.setV_saidas(saldoAntes.getV_saidas() - v_alterada);
+        	}
+    		saldoAlterada = saldoAntes.getQ_anterior() + (saldoAntes.getQ_entradas() - saldoAntes.getQ_saidas());
+    		saldoAntes.setQ_atual(saldoAlterada);
+    		this.saldosRepository.save(saldoAntes);
+    		// Fazendo de novo (alterando)
+    		q_alterada = estoqueDTO.quantidade();
+    		v_alterada = (estoqueDTO.valorUnitario() * q_alterada);
+        	if (estoqueDTO.tipo() == "E") {
+        		saldo.setQ_entradas(saldo.getQ_entradas() + q_alterada);
+        		saldo.setV_entradas(saldo.getV_entradas() + v_alterada);
+        	} else {
+        		saldo.setQ_saidas(saldo.getQ_saidas() + q_alterada);
+        		saldo.setV_saidas(saldo.getV_saidas() + v_alterada);
+        	}
+    		saldoAlterada = saldo.getQ_anterior() + (saldo.getQ_entradas() - saldo.getQ_saidas());
+    		saldo.setQ_atual(saldoAlterada);
 
-            return estoqueRepository.save(estoque);
+    		return this.saldosRepository.save(saldo);
         }
+
         return null;
     }
 
@@ -117,7 +142,7 @@ public class SaldosService {
 	}
 	
 	private String reprocessaSaldo(EstoqueDTO registro) {
-		minar
+		
 		return "Processado";
 	}
 }
