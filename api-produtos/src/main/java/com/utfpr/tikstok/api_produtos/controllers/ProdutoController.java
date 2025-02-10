@@ -1,7 +1,6 @@
 package com.utfpr.tikstok.api_produtos.controllers;
 
 import com.utfpr.tikstok.api_produtos.dtos.ProdutoDTO;
-import com.utfpr.tikstok.api_produtos.dtos.ProdutoEstoqueUpdateDTO;
 import com.utfpr.tikstok.api_produtos.models.Produto;
 import com.utfpr.tikstok.api_produtos.services.ProdutoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -171,49 +170,4 @@ public class ProdutoController {
                     .body("Produto não encontrado para exclusão!");
         }
     }
-
-    @PutMapping("/{id}/atualizar-estoque")
-    @Operation(
-            summary = "Atualizar estoque de produto",
-            description = "Atualiza o estoque de um produto com base no ID, adicionando ou removendo quantidades.",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Dados para a atualização de estoque.",
-                    required = true,
-                    content = @Content(
-                            schema = @Schema(implementation = ProdutoEstoqueUpdateDTO.class),
-                            examples = {
-                                    @ExampleObject(
-                                            name = "Exemplo de entrada.",
-                                            value = "{\"tipo\": \"E\", \"qtdEstoque\": 10.0}",
-                                            summary = "Entrada de estoque válida"
-                                    )
-                            }
-                    )
-            ),
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Estoque atualizado com sucesso.",
-                            content = @Content(schema = @Schema(implementation = Produto.class))
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Produto não encontrado."
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Dados inválidos para a atualização do estoque."
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Erro interno do servidor."
-                    )
-            }
-    )
-    public ResponseEntity<?> atualizarEstoque(@PathVariable Long id,
-                                              @RequestBody @Valid ProdutoEstoqueUpdateDTO estoqueDTO) {
-        Produto produtoAtualizado = produtoService.atualizarEstoque(id, estoqueDTO.tipo(), estoqueDTO.qtdEstoque());
-        return ResponseEntity.ok(produtoAtualizado);
-    }
-
 }
