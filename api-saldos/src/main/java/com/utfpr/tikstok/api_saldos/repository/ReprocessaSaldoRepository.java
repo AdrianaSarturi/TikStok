@@ -24,5 +24,5 @@ public interface ReprocessaSaldoRepository extends JpaRepository<Saldos, SaldosK
 			"  FROM saldos s " +
 			" WHERE s.idproduto = :idproduto " +
 			"		AND s.data > :data")
-    List<Saldos> findAllByNome(@Param("idproduto") Long idproduto, @Param("data") Date data);
+    List<Saldos> findAllBySaldosKey(@Param("idproduto") Long idproduto, @Param("data") Date data);
 }

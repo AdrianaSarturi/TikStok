@@ -3,15 +3,16 @@ package com.utfpr.tikstok.api_saldos.services;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.utfpr.tikstok.api_estoques.dtos.EstoqueDTO;
-import com.utfpr.tikstok.api_estoques.dtos.EstoqueUpdateDTO;
 import com.utfpr.tikstok.api_estoques.models.Estoque;
 import com.utfpr.tikstok.api_estoques.repository.EstoqueRepository;
 import com.utfpr.tikstok.api_saldos.models.Saldos;
 import com.utfpr.tikstok.api_saldos.models.SaldosKey;
+import com.utfpr.tikstok.api_saldos.repository.ReprocessaSaldoRepository;
 import com.utfpr.tikstok.api_saldos.repository.SaldoAnteriorRepository;
 import com.utfpr.tikstok.api_saldos.repository.SaldosRepository;
 
@@ -19,6 +20,7 @@ import com.utfpr.tikstok.api_saldos.repository.SaldosRepository;
 public class SaldosService {
 	private SaldosRepository saldosRepository;
 	private SaldoAnteriorRepository saldoAnteriorRepository;
+	private ReprocessaSaldoRepository reprocessaSaldoRepository;
 	private EstoqueRepository estoqueRepository;
 	
 	public SaldosService(SaldosRepository repository) {
@@ -74,7 +76,11 @@ public class SaldosService {
 		saldo.setV_saidas(v_saidas);
 		saldo.setQ_atual(saldoAtual);
 		
-		return this.saldosRepository.save(saldo);
+		Saldos saldoIncluido = this.saldosRepository.save(saldo); 
+		
+		this.reprocessaSaldo(registro);
+		
+		return saldoIncluido;
 	}
 
 	public Saldos getSaldoById(SaldosKey saldoId) {
@@ -119,8 +125,15 @@ public class SaldosService {
         	}
     		saldoAlterada = saldo.getQ_anterior() + (saldo.getQ_entradas() - saldo.getQ_saidas());
     		saldo.setQ_atual(saldoAlterada);
+    		
+    		Saldos saldoAlterado = this.saldosRepository.save(saldo);
+    		
+    		// Criando um novo EstoqueDTO com a data do lançamento antes da alteração
+    		EstoqueDTO reprocesso = new EstoqueDTO(estoqueDTO.id(), estoque.getDtMovimento(), estoqueDTO.tipo(), estoqueDTO.idProduto(), estoqueDTO.quantidade(), estoqueDTO.valorUnitario());
+    		
+    		this.reprocessaSaldo(reprocesso);
 
-    		return this.saldosRepository.save(saldo);
+    		return saldoAlterado;
         }
 
         return null;
@@ -141,8 +154,23 @@ public class SaldosService {
         return novaData;
 	}
 	
-	private String reprocessaSaldo(EstoqueDTO registro) {
-		
-		return "Processado";
+	private void reprocessaSaldo(EstoqueDTO registro) {
+		List<Saldos> lista = reprocessaSaldoRepository.findAllBySaldosKey(registro.idProduto(), this.dataSemHora(registro.dtMovimento()));
+		String tipo;
+		double quantidade;
+		tipo = registro.tipo();
+		quantidade = registro.quantidade();
+		if (lista != null) {
+			for (Saldos regSaldo : lista) {
+				if (tipo == "E") {
+					regSaldo.setQ_anterior(regSaldo.getQ_anterior() + quantidade);
+					regSaldo.setQ_atual(regSaldo.getQ_atual() + quantidade);
+				} else {
+					regSaldo.setQ_anterior(regSaldo.getQ_anterior() + quantidade);
+					regSaldo.setQ_atual(regSaldo.getQ_atual() + quantidade);
+				}
+				this.saldosRepository.save(regSaldo);
+			}
+		}
 	}
 }
