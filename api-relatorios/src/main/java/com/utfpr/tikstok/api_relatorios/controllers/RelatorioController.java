@@ -35,8 +35,8 @@ public class RelatorioController {
             description = "Consulta as movimentações de estoque de um produto em um período específico.",
             parameters = {
                     @Parameter(name = "idProduto", description = "ID do produto", required = true),
-                    @Parameter(name = "dtInicial", description = "Data inicial do período", required = true),
-                    @Parameter(name = "dtFinal", description = "Data final do período", required = true)
+                    @Parameter(name = "dtInicial", description = "Data inicial do período (formato: dd/MM/yyyy)", required = true),
+                    @Parameter(name = "dtFinal", description = "Data final do período (formato: dd/MM/yyyy)", required = true)
             },
             responses = {
                     @ApiResponse(
@@ -52,8 +52,8 @@ public class RelatorioController {
     )
     public ResponseEntity<?> getExtratoProduto(
             @RequestParam Long idProduto,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dtInicial,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dtFinal
+            @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date dtInicial,
+            @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date dtFinal
     ) {
         ProdutoPeriodoParmDTO parm = new ProdutoPeriodoParmDTO(idProduto, dtInicial, dtFinal);
         RelatorioExtratoProdDTO extratoProdDTO = relatorioService.getExtratoProduto(parm);
