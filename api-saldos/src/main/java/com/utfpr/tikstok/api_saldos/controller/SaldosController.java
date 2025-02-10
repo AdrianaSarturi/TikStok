@@ -1,9 +1,12 @@
 package com.utfpr.tikstok.api_saldos.controller;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -72,9 +75,12 @@ public class SaldosController {
             summary = "Buscar Saldo",
             description = "Busca os dados de um determinado saldo com base no seu idProduto e a sua data."
     )
-    public ResponseEntity<?> getEstoqueById(@PathVariable Long idProduto, @PathVariable Date data){
-    	SaldosKey saldoId = new SaldosKey(idProduto, data);
-        Saldos saldoBusca = saldoService.getSaldoById(saldoId);
+    public ResponseEntity<?> consultaSaldo(@PathVariable Long idProduto, @PathVariable Date data){
+    	SaldosKey saldoId = new SaldosKey();
+    	saldoId.setIdProduto(idProduto);
+    	saldoId.setData(this.dataSemHora(data));
+    	
+        Saldos saldoBusca = saldoService.consultaSaldo(saldoId);
         if(saldoBusca == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Saldo não encontrado!");
         else
@@ -93,12 +99,56 @@ public class SaldosController {
                     )
             )
     )
-    public ResponseEntity<?> alterarEstoque(@PathVariable Long idProduto, @PathVariable Date data, @Valid @RequestBody EstoqueDTO estoqueDTO){
+    public ResponseEntity<?> alterarSaldo(@PathVariable Long idProduto, @PathVariable Date data, @Valid @RequestBody EstoqueDTO estoqueDTO){
         Saldos saldo = saldoService.alterarSaldo(idProduto, data, estoqueDTO);
         if(saldo != null){
             return ResponseEntity.ok().body(saldo);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível alterar o registro do saldo.");
     }
+    @DeleteMapping("/{idProduto}/{data}")
+    @Operation(
+            summary = "Excluir saldo",
+            description = "Deleta o saldo que foi movimentado, com base no seu idProduto e a sua data.",
+                    requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                            description = "Corpo da requisição",
+                            required = true,
+                            content = @Content(
+                                    schema = @Schema(implementation = EstoqueDTO.class)
+                            )
+                    ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Estoque deletado com sucesso."
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Não foi possível deletar o registro."
+                    )
+            }
+    )
+    public ResponseEntity<?> excluirSaldo(@PathVariable Long idProduto, @PathVariable Date data, @Valid @RequestBody EstoqueDTO estoqueDTO){
+    	Saldos saldo = this.saldoService.excluirSaldo(idProduto, data, estoqueDTO);
+        if(saldo != null){
+            return ResponseEntity.ok().body(saldo);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Não foi possível deletar o registro!");
+    }
+
+	private Date dataSemHora(Date dataComHora) {
+        // Converter Date para LocalDateTime
+        LocalDateTime localDateTime = dataComHora.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+
+        // Zerar horas, minutos e segundos
+        LocalDateTime dataZerada = localDateTime.toLocalDate().atStartOfDay();
+
+        // Converter de volta para Date (se necessário)
+        Date novaData = Date.from(dataZerada.atZone(ZoneId.systemDefault()).toInstant());
+        
+        return novaData;
+	}
 
 }

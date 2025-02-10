@@ -83,7 +83,7 @@ public class SaldosService {
 		return saldoIncluido;
 	}
 
-	public Saldos getSaldoById(SaldosKey saldoId) {
+	public Saldos consultaSaldo(SaldosKey saldoId) {
 		return saldosRepository.findById(saldoId).orElse(null);
 	}
 
@@ -132,6 +132,39 @@ public class SaldosService {
     		EstoqueDTO reprocesso = new EstoqueDTO(estoqueDTO.id(), estoque.getDtMovimento(), estoqueDTO.tipo(), estoqueDTO.idProduto(), estoqueDTO.quantidade(), estoqueDTO.valorUnitario());
     		
     		this.reprocessaSaldo(reprocesso);
+
+    		return saldoAlterado;
+        }
+
+        return null;
+    }
+
+    public Saldos excluirSaldo(Long idProduto, Date data, EstoqueDTO estoqueDTO) {
+		SaldosKey saldoId = new SaldosKey();
+		saldoId.setIdProduto(idProduto);
+		saldoId.setData(this.dataSemHora(data));
+
+        Saldos saldo = saldosRepository.findById(saldoId).orElse(null);
+        if(saldo != null){
+        	// Desfazendo...
+    		double q_alterada;
+    		double v_alterada;
+    		double saldoAlterada;
+    		q_alterada = estoqueDTO.quantidade();
+    		v_alterada = (estoqueDTO.valorUnitario() * q_alterada);
+        	if (estoqueDTO.tipo() == "E") {
+        		saldo.setQ_entradas(saldo.getQ_entradas() - q_alterada);
+        		saldo.setV_entradas(saldo.getV_entradas() - v_alterada);
+        	} else {
+        		saldo.setQ_saidas(saldo.getQ_saidas() - q_alterada);
+        		saldo.setV_saidas(saldo.getV_saidas() - v_alterada);
+        	}
+    		saldoAlterada = saldo.getQ_anterior() + (saldo.getQ_entradas() - saldo.getQ_saidas());
+    		saldo.setQ_atual(saldoAlterada);
+    		
+    		Saldos saldoAlterado = this.saldosRepository.save(saldo);
+    		
+    		this.reprocessaSaldo(estoqueDTO);
 
     		return saldoAlterado;
         }
