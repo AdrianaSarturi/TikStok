@@ -3,6 +3,7 @@ package com.utfpr.tikstok.api_relatorios.controllers;
 import com.utfpr.tikstok.api_relatorios.dtos.ExtratoProdutoDTO;
 import com.utfpr.tikstok.api_relatorios.dtos.PeriodoParmDTO;
 import com.utfpr.tikstok.api_relatorios.dtos.ProdutoPeriodoParmDTO;
+import com.utfpr.tikstok.api_relatorios.dtos.RelatorioExtratoProdDTO;
 import com.utfpr.tikstok.api_relatorios.models.ExtratoProduto;
 import com.utfpr.tikstok.api_relatorios.services.RelatorioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,19 +56,9 @@ public class RelatorioController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dtFinal
     ) {
         ProdutoPeriodoParmDTO parm = new ProdutoPeriodoParmDTO(idProduto, dtInicial, dtFinal);
-        List<ExtratoProduto> extratoProd = relatorioService.getExtratoProduto(parm);
-        if (extratoProd != null && !extratoProd.isEmpty()) {
-            List<ExtratoProdutoDTO> extratos = extratoProd.stream()
-                    .map(ep -> new ExtratoProdutoDTO(
-                            ep.getId(),
-                            ep.getTipo(),
-                            ep.getQuantidade(),
-                            ep.getValorUnitario(),
-                            ep.getValorTotal(),
-                            ep.getDtMovimento()
-                    ))
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok().body(extratos);
+        RelatorioExtratoProdDTO extratoProdDTO = relatorioService.getExtratoProduto(parm);
+        if (extratoProdDTO != null && !extratoProdDTO.extrato().isEmpty()) {
+            return ResponseEntity.ok().body(extratoProdDTO);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto sem movimentações de estoque para o período informado.");
     }
