@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.utfpr.tikstok.api_estoques.dtos.EstoqueDTO;
-import com.utfpr.tikstok.api_estoques.models.Estoque;
-import com.utfpr.tikstok.api_estoques.repository.EstoqueRepository;
+import com.utfpr.tikstok.api_saldos.dtos.EstoqueDTO;
+import com.utfpr.tikstok.api_saldos.models.Estoque;
+import com.utfpr.tikstok.api_saldos.repository.EstoqueRepository;
 import com.utfpr.tikstok.api_saldos.models.Saldos;
 import com.utfpr.tikstok.api_saldos.models.SaldosKey;
 import com.utfpr.tikstok.api_saldos.repository.ReprocessaSaldoRepository;

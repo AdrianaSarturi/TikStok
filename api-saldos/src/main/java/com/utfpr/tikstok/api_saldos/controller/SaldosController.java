@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.utfpr.tikstok.api_estoques.dtos.EstoqueDTO;
-import com.utfpr.tikstok.api_estoques.dtos.EstoqueUpdateDTO;
-import com.utfpr.tikstok.api_estoques.models.Estoque;
+import com.utfpr.tikstok.api_saldos.dtos.EstoqueDTO;
+import com.utfpr.tikstok.api_saldos.models.Estoque;
 import com.utfpr.tikstok.api_saldos.models.Saldos;
 import com.utfpr.tikstok.api_saldos.models.SaldosKey;
 import com.utfpr.tikstok.api_saldos.services.SaldosService;

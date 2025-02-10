@@ -5,24 +5,24 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import com.utfpr.tikstok.api_saldos.models.Saldos;
 import com.utfpr.tikstok.api_saldos.models.SaldosKey;
 
 public interface ReprocessaSaldoRepository extends JpaRepository<Saldos, SaldosKey> {
-	@Query(	"SELECT idproduto, " +
-			"		data, " + 
-			"		q_anterior, " +
-			"		v_anterior, " +
-			"		q_entradas, " +
-			"		v_entradas, " +
-			"		q_saidas, " +
-			"		v_saidas, " +
-			"		q_atual, " +
-			"		v_atual " + 
-			"  FROM saldos s " +
-			" WHERE s.idproduto = :idproduto " +
-			"		AND s.data > :data")
-    List<Saldos> findAllBySaldosKey(@Param("idproduto") Long idproduto, @Param("data") Date data);
+	@Query(	value = "  SELECT s.idproduto, " +
+					"		  s.data, " + 
+					"		  s.q_anterior, " +
+					"		  s.v_anterior, " +
+					"		  s.q_entradas, " +
+					"		  s.v_entradas, " +
+					"		  s.q_saidas, " +
+					"		  s.v_saidas, " +
+					"		  s.q_atual, " +
+					"	  	  s.v_atual " + 
+					"    FROM saldos s " +
+					"   WHERE s.idproduto = ?1 " +
+					"		  AND s.data > ?2" + 
+					"ORDER BY s.data", nativeQuery = true)
+    List<Saldos> findAllBySaldosKey(Long idproduto, Date data);
 }
