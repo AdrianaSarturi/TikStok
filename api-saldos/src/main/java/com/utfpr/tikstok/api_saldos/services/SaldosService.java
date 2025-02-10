@@ -12,15 +12,11 @@ import com.utfpr.tikstok.api_saldos.models.Estoque;
 import com.utfpr.tikstok.api_saldos.repository.EstoqueRepository;
 import com.utfpr.tikstok.api_saldos.models.Saldos;
 import com.utfpr.tikstok.api_saldos.models.SaldosKey;
-import com.utfpr.tikstok.api_saldos.repository.ReprocessaSaldoRepository;
-import com.utfpr.tikstok.api_saldos.repository.SaldoAnteriorRepository;
 import com.utfpr.tikstok.api_saldos.repository.SaldosRepository;
 
 @Service
 public class SaldosService {
 	private SaldosRepository saldosRepository;
-	private SaldoAnteriorRepository saldoAnteriorRepository;
-	private ReprocessaSaldoRepository reprocessaSaldoRepository;
 	private EstoqueRepository estoqueRepository;
 	
 	public SaldosService(SaldosRepository repository) {
@@ -46,7 +42,7 @@ public class SaldosService {
 			q_saidas = saldo.getQ_saidas();
 			v_saidas = saldo.getV_saidas();
 		} else {
-			Saldos saldoBase = saldoAnteriorRepository.getSaldoAnterior(registro.idProduto(), this.dataSemHora(registro.dtMovimento()));
+			Saldos saldoBase = saldosRepository.getSaldoAnterior(registro.idProduto(), this.dataSemHora(registro.dtMovimento()));
 			if (saldoBase != null) {
 				saldoAnterior = saldoBase.getQ_atual();
 			} else {
@@ -188,7 +184,7 @@ public class SaldosService {
 	}
 	
 	private void reprocessaSaldo(EstoqueDTO registro) {
-		List<Saldos> lista = reprocessaSaldoRepository.findAllBySaldosKey(registro.idProduto(), this.dataSemHora(registro.dtMovimento()));
+		List<Saldos> lista = saldosRepository.findAllBySaldosKey(registro.idProduto(), this.dataSemHora(registro.dtMovimento()));
 		String tipo;
 		double quantidade;
 		tipo = registro.tipo();
