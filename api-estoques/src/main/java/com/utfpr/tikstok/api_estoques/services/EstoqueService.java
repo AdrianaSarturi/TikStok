@@ -56,7 +56,7 @@ public class EstoqueService {
         Estoque estoqueSalvo = this.estoqueRepository.save(estoque);
 
         // Chama API dos Saldos para atualizar o saldo do produto no dia da movimentação
-        /*if(estoqueSalvo != null)
+        if(estoqueSalvo != null)
             saldosFeignClient.processarSaldo(
                     new EstoqueDTO(
                             estoqueSalvo.getId(),
@@ -67,7 +67,6 @@ public class EstoqueService {
                             estoqueSalvo.getValorUnitario()
                     )
             );
-         */
 
         return estoqueSalvo;
     }
@@ -87,8 +86,9 @@ public class EstoqueService {
             estoque.setQuantidade(estoqueUpdateDTO.quantidade() != null ? estoqueUpdateDTO.quantidade() : estoque.getQuantidade());
             estoque.setValorUnitario(estoqueUpdateDTO.valorUnitario() != null ? estoqueUpdateDTO.valorUnitario() : estoque.getValorUnitario());
 
-            /*
             saldosFeignClient.alterarSaldo(
+                    estoque.getIdProduto(),
+                    estoque.getDtMovimento(),
                     new EstoqueDTO(
                             estoque.getId(),
                             estoque.getDtMovimento(),
@@ -98,7 +98,6 @@ public class EstoqueService {
                             estoque.getValorUnitario()
                     )
             );
-             */
 
             return estoqueRepository.save(estoque);
         }
