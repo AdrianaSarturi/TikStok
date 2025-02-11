@@ -17,7 +17,7 @@ public record EstoqueDTO(
         @NotNull(message = "Quantidade não pode ser nula!")
         @Positive(message = "Quantidade deve ser maior do que zero!")
         Integer quantidade,
-        @NotNull(message = "Valor não pode ser nulo!")
+        /*@NotNull(message = "Valor não pode ser nulo!")*/
         @Positive(message = "Valor deve ser maior do que zero!")
         Double valorUnitario
 ) {

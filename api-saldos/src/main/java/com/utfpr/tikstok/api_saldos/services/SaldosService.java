@@ -56,7 +56,7 @@ public class SaldosService {
 			v_saidas = 0.00;
 		}
 
-		if (registro.tipo() == "E") {
+		if (registro.tipo().equals("E")) {
 			q_entradas += registro.quantidade();
 			v_entradas += (registro.valorUnitario() * registro.quantidade());
 		} else {
@@ -99,7 +99,7 @@ public class SaldosService {
     		v_alterada = (estoque.getValorUnitario() * q_alterada);
         	SaldosKey saldoIdAntes = new SaldosKey(estoque.getIdProduto(), this.dataSemHora(estoque.getDtMovimento()));
         	Saldos saldoAntes = saldosRepository.findById(saldoIdAntes).orElse(null);
-        	if (estoque.getTipo() == "E") {
+        	if (estoque.getTipo().equals("E")) {
         		saldoAntes.setQ_entradas(saldoAntes.getQ_entradas() - q_alterada);
         		saldoAntes.setV_entradas(saldoAntes.getV_entradas() - v_alterada);
         	} else {
@@ -112,7 +112,7 @@ public class SaldosService {
     		// Fazendo de novo (alterando)
     		q_alterada = estoqueDTO.quantidade();
     		v_alterada = (estoqueDTO.valorUnitario() * q_alterada);
-        	if (estoqueDTO.tipo() == "E") {
+        	if (estoqueDTO.tipo().equals("E")) {
         		saldo.setQ_entradas(saldo.getQ_entradas() + q_alterada);
         		saldo.setV_entradas(saldo.getV_entradas() + v_alterada);
         	} else {
@@ -148,7 +148,7 @@ public class SaldosService {
     		double saldoAlterada;
     		q_alterada = estoqueDTO.quantidade();
     		v_alterada = (estoqueDTO.valorUnitario() * q_alterada);
-        	if (estoqueDTO.tipo() == "E") {
+        	if (estoqueDTO.tipo().equals("E")) {
         		saldo.setQ_entradas(saldo.getQ_entradas() - q_alterada);
         		saldo.setV_entradas(saldo.getV_entradas() - v_alterada);
         	} else {
@@ -191,7 +191,7 @@ public class SaldosService {
 		quantidade = registro.quantidade();
 		if (lista != null) {
 			for (Saldos regSaldo : lista) {
-				if (tipo == "E") {
+				if (tipo.equals("E")) {
 					regSaldo.setQ_anterior(regSaldo.getQ_anterior() + quantidade);
 					regSaldo.setQ_atual(regSaldo.getQ_atual() + quantidade);
 				} else {
