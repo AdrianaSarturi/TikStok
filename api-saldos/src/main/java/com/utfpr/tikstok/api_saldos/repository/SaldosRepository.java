@@ -28,20 +28,11 @@ public interface SaldosRepository extends JpaRepository<Saldos, SaldosKey> {
 		    		"    LIMIT 1", nativeQuery = true)
     public Saldos getSaldoAnterior(Long idproduto, Date data);
 
-	@Query(	value = "  SELECT s.id_produto, " +
-					"		  s.data, " + 
-					"		  s.q_anterior, " +
-					"		  s.v_anterior, " +
-					"		  s.q_entradas, " +
-					"		  s.v_entradas, " +
-					"		  s.q_saidas, " +
-					"		  s.v_saidas, " +
-					"		  s.q_atual, " +
-					"	  	  s.v_atual " + 
+	@Query(value =	"  SELECT * " +
 					"    FROM saldos s " +
-					"   WHERE s.id_produto = ?1 " +
-					"		  AND s.data > ?2" + 
+					"   WHERE s.id_produto = ?1" +
+					"		  AND s.data > ?2 " + 
 					"ORDER BY s.data", nativeQuery = true)
-	public List<Saldos> findAllBySaldosKey(Long idproduto, Date data);
+	public List<Saldos> getSaldoPosterior(Long idproduto, Date data);
 
 }

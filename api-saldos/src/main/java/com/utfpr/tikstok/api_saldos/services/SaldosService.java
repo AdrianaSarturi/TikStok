@@ -2,6 +2,7 @@ package com.utfpr.tikstok.api_saldos.services;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -169,22 +170,17 @@ public class SaldosService {
     }
 
 	private Date dataSemHora(Date dataComHora) {
-        // Converter Date para LocalDateTime
+		// Converter Date para LocalDateTime
         LocalDateTime localDateTime = dataComHora.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
+        LocalDateTime dataSemHora = localDateTime.withHour(0).withMinute(0).withSecond(0).withNano(0);
 
-        // Zerar horas, minutos e segundos
-        LocalDateTime dataZerada = localDateTime.toLocalDate().atStartOfDay();
-
-        // Converter de volta para Date (se necessário)
-        Date novaData = Date.from(dataZerada.atZone(ZoneId.systemDefault()).toInstant());
-        
-        return novaData;
+        return Date.from(dataSemHora.atZone(ZoneId.systemDefault()).toInstant());
 	}
 	
 	private void reprocessaSaldo(EstoqueDTO registro) {
-		List<Saldos> lista = saldosRepository.findAllBySaldosKey(registro.idProduto(), this.dataSemHora(registro.dtMovimento()));
+		List<Saldos> lista = saldosRepository.getSaldoPosterior(registro.idProduto(), this.dataSemHora(registro.dtMovimento()));
 		String tipo;
 		double quantidade;
 		tipo = registro.tipo();
@@ -195,8 +191,8 @@ public class SaldosService {
 					regSaldo.setQ_anterior(regSaldo.getQ_anterior() + quantidade);
 					regSaldo.setQ_atual(regSaldo.getQ_atual() + quantidade);
 				} else {
-					regSaldo.setQ_anterior(regSaldo.getQ_anterior() + quantidade);
-					regSaldo.setQ_atual(regSaldo.getQ_atual() + quantidade);
+					regSaldo.setQ_anterior(regSaldo.getQ_anterior() - quantidade);
+					regSaldo.setQ_atual(regSaldo.getQ_atual() - quantidade);
 				}
 				this.saldosRepository.save(regSaldo);
 			}

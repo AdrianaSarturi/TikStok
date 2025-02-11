@@ -30,7 +30,7 @@ public class EstoqueService {
         ProdutoDTO produtoBusca;
 
         estoque.setTipo(estoqueDTO.tipo());
-        estoque.setDtMovimento(new Date());
+        estoque.setDtMovimento(estoqueDTO.dtMovimento());
 
         // Verifica existência do produto
         try {
